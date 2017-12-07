@@ -79,6 +79,19 @@
                         <img src="images/cat3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
                     </td>
                 </tr>
+              
+              <!-- Han's code -->
+                <tr>
+                    <td>
+                        <img src="images/saber1_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/saber2_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/saber3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
@@ -100,7 +113,12 @@
     <category name="cats" colour="175">
         <block type="catpose"></block>
     </category>
-
+  
+  <!-- Han's code -->
+    <category name="saber" colour="175">
+        <block type="saberpose"></block>
+    </category>
+  
     <sep></sep>
 
     <category name="Logic" colour="210">
@@ -146,6 +164,10 @@
     var ctx = document.getElementById('catAnimation').getContext('2d');
 
     var animation = true;
+  
+    /* Han's code
+       Probably not actually necessary */
+    var animationSaber = true;
 
     /*********************
      * Defining a Sprite *
@@ -201,7 +223,40 @@
     var indexToArrays = 0;
     var numOfInstructions = 0;
     var arrayOfPoses = [];
+  
+  
+  
+    /* Han's code */
+    /**********************
+     * Defining saber *
+     **********************/
+    var saberImage = new Image();
+    saberImage.src = "images/saber1.png";
 
+    var saber1 = sprite({
+        context: canvas.getContext("2d"),
+        width: 500,
+        height: 500,
+        image: saberImage,
+        x: 0,
+        y: 0
+    });
+
+    /* Han's code */
+    /******************
+     * Show saber *
+     ******************/
+    saber1.render();
+
+    var indexToSaberArrays = 0;
+    var numOfSaberInstructions = 0;
+    var arrayOfSaberPoses = [];
+
+  
+  
+  
+  
+  
     /**************************************
      * RUN and STOP buttons on the canvas *
      **************************************/
@@ -217,6 +272,10 @@
         }
         document.getElementById('codeArea').innerHTML += '}<br>';
         animation = true;
+      
+        /* Han's code
+           probably not necessarl */
+        animationSaber = true;
 
         try {
             eval(code);
@@ -225,11 +284,21 @@
         }
 
         window.requestAnimationFrame(animate);
+      
+        /* Han's code */
+        window.requestAnimationFrame(animateSaber);
     }
 
     function updatePose(poseNum){
         arrayOfPoses.push(poseNum);
         numOfInstructions++;
+    }
+  
+  
+    /* Han's code */
+    function updatePose(poseNum){
+        arrayOfSaberPoses.push(poseNum);
+        numOfSaberInstructions++;
     }
 
     function animate() {
@@ -246,14 +315,38 @@
             }
         }, 1000);
     }
+  
+  
+    /* Han's code */
+    function animateSaber() {
+        setTimeout(function() {
+            setsaberImage(arrayOfSaberPoses[indexToSaberArrays]);
+
+            indexToSaberArrays++;
+
+            if (indexToSaberArrays == numOfSaberInstructions)
+                indexToSaberArrays = 0;
+
+            if (animationSaber) {
+                window.requestAnimationFrame(animateSaber);
+            }
+        }, 1000);
+    }
 
     function stopCode() {
         animation = false;
+      
+        /* Han's code
+           probably not necessary */
+        animationSaber = false;
     }
 
     function resetCanvas(){
         clearCanvas();
         setcatImage(1);
+        
+        /* Han's code */
+        setsaberImage(1);
     }
 
     /*************************************
@@ -278,6 +371,21 @@
         clearCanvas();
         catImage.src = "images/cat"+catIndex+".png";
         ctx.drawImage(cat1.image, cat1.x, cat1.y);
+        ctx.save();
+        ctx.restore();
+    }
+  
+  
+    /* Han's code */
+    /*****************************
+     * Changing saber's Pose *
+     *****************************/
+    function setsaberImage(saberIndex){
+        if(!saberIndex)
+          saberIndex = 1;
+        clearCanvas();
+        saberImage.src = "images/saber"+saberIndex+".png";
+        ctx.drawImage(saber1.image, saber1.x, saber1.y);
         ctx.save();
         ctx.restore();
     }

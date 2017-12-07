@@ -41,6 +41,23 @@ Blockly.Blocks['catpose'] = {
     }
 };
 
+
+
+
+/* Han's code */
+Blockly.Blocks['saberpose'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Change Pose")
+            .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "saberIndex");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(175);
+        this.setTooltip("");
+        this.setHelpUrl("");
+    }
+};
+
 Blockly.JavaScript['whenrunclicked'] = function(block) {
     var statements_name = Blockly.JavaScript.statementToCode(block, 'NAME');
     var blockCode = statements_name;
@@ -55,5 +72,14 @@ Blockly.JavaScript['clearscreen'] = function(block) {
 Blockly.JavaScript['catpose'] = function(block) {
     var dropdown_catindex = block.getFieldValue('catIndex');
     var blockCode = 'updatePose('+dropdown_catindex+');';
+    return blockCode;
+};
+
+
+
+/* Han's code */
+Blockly.JavaScript['saberpose'] = function(block) {
+    var dropdown_saberindex = block.getFieldValue('saberIndex');
+    var blockCode = 'updatePose('+dropdown_saberindex+');';
     return blockCode;
 };
