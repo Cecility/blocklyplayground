@@ -63,6 +63,7 @@
         <div style="height:53%;width:98%;outline-style: solid;outline-width: 1px;text-align:center;margin-left:5px;margin-top:5px;">
             <div style="position:absolute;z-index:4;width:45%;height:37%">
                 <canvas id="catAnimation"></canvas>
+                <canvas id="saberAnimation"></canvas>      
             </div>
         </div>
         <hr>
@@ -78,10 +79,8 @@
                     <td>
                         <img src="images/cat3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
                     </td>
-                </tr>
-              
-              <!-- Han's code -->
-                <tr>
+                  
+                    <!-- Han's  code -->
                     <td>
                         <img src="images/saber1_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
                     </td>
@@ -110,15 +109,21 @@
         <block type="whenrunclicked"></block>
         <block type="clearscreen"></block>
     </category>
+  
+    <!-- Han's code.
+         Note to self, apparently you create an automatic drop down when you put a category inside of another category -->
+  <category name = "animals" colour="175">
+    <block type="say"></block>
     <category name="cats" colour="175">
-        <block type="catpose"></block>
+      <block type="catpose"></block>                                                                                                                  
     </category>
-  
-  <!-- Han's code -->
-    <category name="saber" colour="175">
-        <block type="saberpose"></block>
+        
+        <!-- Han's code -->
+    <category name="saber" colour="175">     
+      <block type="saberpose"></block>
     </category>
-  
+  </category>
+
     <sep></sep>
 
     <category name="Logic" colour="210">
@@ -158,16 +163,12 @@
      * Setup the Canvas *
      ********************/
     var canvas = document.getElementById("catAnimation");
-    canvas.width = 480;
+    canvas.width = 1000;
     canvas.height = 480;
 
     var ctx = document.getElementById('catAnimation').getContext('2d');
 
     var animation = true;
-  
-    /* Han's code
-       Probably not actually necessary */
-    var animationSaber = true;
 
     /*********************
      * Defining a Sprite *
@@ -215,52 +216,60 @@
         y: 0
     });
 
-    /******************
-     * Show the cat *
-     ******************/
-    cat1.render();
-
-    var indexToArrays = 0;
-    var numOfInstructions = 0;
-    var arrayOfPoses = [];
   
-  
-  
-    /* Han's code */
-    /**********************
-     * Defining saber *
-     **********************/
+    /*
+      Han's code
+      Defining Saber
+    */
     var saberImage = new Image();
-    saberImage.src = "images/saber1.png";
-
+    saberImage.src = "images/saber1.png";     
+    
     var saber1 = sprite({
         context: canvas.getContext("2d"),
-        width: 500,
-        height: 500,
+        width: 250,
+        height: 250,
         image: saberImage,
-        x: 0,
+        x: 500,
         y: 0
     });
-
-    /* Han's code */
+    
     /******************
-     * Show saber *
+     * Show cat & saber *
      ******************/
-    saber1.render();
+  //cat1.render();
+    
+    /* Han's code */
+    //saber1.render();
+  
+    var indexToArrays = 0;
+  var indexToSaberArrays = 0;
+    var indexToSayArrays = 0;
+  
+    var numOfInstructions = 0;
+  var numOfSaberInstructions = 0;
+    var numOfSayInstructions = 0;
+  
+    var arrayOfPoses = [];
+  var arrayOfSaberPoses = [];
+    var arrayOfSay = [];
 
-    var indexToSaberArrays = 0;
-    var numOfSaberInstructions = 0;
-    var arrayOfSaberPoses = [];
-
-  
-  
-  
-  
-  
     /**************************************
      * RUN and STOP buttons on the canvas *
      **************************************/
     function runCode() {
+        /* Han's code 
+           This fixes how janky it is when you press run twice.
+           Previously, it didn't work when you paused and ran multiple times because the previous instructions were not cleared.
+           Now it actually clears all previous caches before it runs anything, so you don't have lingering code.
+        */
+        numOfInstructions = 0;
+        numOfSaberInstructions = 0
+        numOfSayInstructions = 0;
+      
+        arrayOfPoses.length = 0;
+        arrayOfSaberPoses.length = 0;
+        arrayOfSay.length = 0;
+      
         code = Blockly.JavaScript.workspaceToCode(workspace);
         var formattedCode = code.split(";");
         console.log(formattedCode);
@@ -272,10 +281,6 @@
         }
         document.getElementById('codeArea').innerHTML += '}<br>';
         animation = true;
-      
-        /* Han's code
-           probably not necessarl */
-        animationSaber = true;
 
         try {
             eval(code);
@@ -284,9 +289,6 @@
         }
 
         window.requestAnimationFrame(animate);
-      
-        /* Han's code */
-        window.requestAnimationFrame(animateSaber);
     }
 
     function updatePose(poseNum){
@@ -296,57 +298,58 @@
   
   
     /* Han's code */
-    function updatePose(poseNum){
+  function updateSaberPose(poseNum){
         arrayOfSaberPoses.push(poseNum);
         numOfSaberInstructions++;
     }
-
+  
+  
+    /* Han's code */
+    function updateSay(sayInput){
+      arrayOfSay.push(sayInput);
+      numOfSayInstructions++;
+    }
+  
+    /* Han's modification */
     function animate() {
         setTimeout(function() {
             setcatImage(arrayOfPoses[indexToArrays]);
+            setSaberImage(arrayOfSaberPoses[indexToSaberArrays]);
+            say(arrayOfSay[indexToSayArrays]);
+          
+            console.log("cat, saber, say");
+            console.log(arrayOfPoses[indexToArrays] + ", " + arrayOfSaberPoses[indexToSaberArrays] + ", " + arrayOfSay[indexToSayArrays]);
+            console.log(indexToArrays + ", " + indexToSaberArrays + ", " + indexToSayArrays);
 
             indexToArrays++;
+      indexToSaberArrays++;
+            indexToSayArrays++;
 
-            if (indexToArrays == numOfInstructions)
+            if(indexToArrays == numOfInstructions)
                 indexToArrays = 0;
+        
+        if(indexToSaberArrays == numOfSaberInstructions)
+                indexToSaberArrays = 0; 
+          
+            if(indexToSayArrays == numOfSayInstructions)
+                indexToSayArrays = 0;
 
             if (animation) {
                 window.requestAnimationFrame(animate);
             }
         }, 1000);
     }
-  
-  
-    /* Han's code */
-    function animateSaber() {
-        setTimeout(function() {
-            setsaberImage(arrayOfSaberPoses[indexToSaberArrays]);
-
-            indexToSaberArrays++;
-
-            if (indexToSaberArrays == numOfSaberInstructions)
-                indexToSaberArrays = 0;
-
-            if (animationSaber) {
-                window.requestAnimationFrame(animateSaber);
-            }
-        }, 1000);
-    }
 
     function stopCode() {
         animation = false;
-      
-        /* Han's code
-           probably not necessary */
-        animationSaber = false;
     }
 
     function resetCanvas(){
         clearCanvas();
-        setcatImage(1);
-        
+        setcatImage(1); 
+      
         /* Han's code */
-        setsaberImage(1);
+        setSaberImage(1);
     }
 
     /*************************************
@@ -368,28 +371,26 @@
     function setcatImage(catIndex){
         if(!catIndex)
           catIndex = 1;
-        clearCanvas();
+        //clearCanvas();
+    ctx.clearRect(0,0,500,500);
         catImage.src = "images/cat"+catIndex+".png";
         ctx.drawImage(cat1.image, cat1.x, cat1.y);
         ctx.save();
         ctx.restore();
     }
-  
-  
-    /* Han's code */
-    /*****************************
-     * Changing saber's Pose *
-     *****************************/
-    function setsaberImage(saberIndex){
-        if(!saberIndex)
-          saberIndex = 1;
-        clearCanvas();
-        saberImage.src = "images/saber"+saberIndex+".png";
-        ctx.drawImage(saber1.image, saber1.x, saber1.y);
-        ctx.save();
-        ctx.restore();
-    }
 
+     /* Han's code */
+     function setSaberImage(saberIndex) {
+         if(!saberIndex)
+             saberIndex = 1;
+         //clearCanvas();
+     ctx.clearRect(500, 0, 500, 500);
+         saberImage.src = "images/saber"+saberIndex+".png";
+         ctx.drawImage(saber1.image, saber1.x, saber1.y);
+         ctx.save();
+         ctx.restore();
+     }
+    
     /***********************
      * Clearing the Canvas *
      ***********************/
@@ -399,4 +400,17 @@
         ctx.restore();
     }
 
+  /***********************
+     * Say *
+     ***********************/
+   function say(sayText){
+        if(!sayText)
+          sayText == "";
+    ctx.font = '24px serif';
+        ctx.fillText("", 500, 400);
+        ctx.fillText(sayText, 500, 400);
+        ctx.save();
+        ctx.restore();
+   }
+   
 </script>

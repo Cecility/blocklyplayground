@@ -31,7 +31,7 @@ Blockly.Blocks['clearscreen'] = {
 Blockly.Blocks['catpose'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("Change Pose")
+            .appendField("Change cat Pose")
             .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "catIndex");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -41,14 +41,11 @@ Blockly.Blocks['catpose'] = {
     }
 };
 
-
-
-
 /* Han's code */
 Blockly.Blocks['saberpose'] = {
     init: function() {
         this.appendDummyInput()
-            .appendField("Change Pose")
+            .appendField("Change saber Pose")
             .appendField(new Blockly.FieldDropdown([["1","1"], ["2","2"], ["3","3"]]), "saberIndex");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -57,6 +54,26 @@ Blockly.Blocks['saberpose'] = {
         this.setHelpUrl("");
     }
 };
+
+
+
+Blockly.Blocks['say'] = {
+    init: function() {
+      this.appendDummyInput()
+          .appendField("Say");
+      
+      this.appendValueInput("TEXT")
+          .setCheck("String");
+      
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      this.setInputsInline(true);
+      this.setColour(5);
+      this.setTooltip("");
+      this.setHelpUrl("");
+    }   
+};  
+
 
 Blockly.JavaScript['whenrunclicked'] = function(block) {
     var statements_name = Blockly.JavaScript.statementToCode(block, 'NAME');
@@ -75,11 +92,15 @@ Blockly.JavaScript['catpose'] = function(block) {
     return blockCode;
 };
 
-
-
 /* Han's code */
 Blockly.JavaScript['saberpose'] = function(block) {
-    var dropdown_saberindex = block.getFieldValue('saberIndex');
-    var blockCode = 'updatePose('+dropdown_saberindex+');';
+    var dropdown_saberIndex = block.getFieldValue('saberIndex');
+    var blockCode = 'updateSaberPose('+dropdown_saberIndex+');';
     return blockCode;
 };
+
+Blockly.JavaScript['say'] = function(block) {
+    var inputText = Blockly.JavaScript.valueToCode(block, 'TEXT', Blockly.JavaScript.ORDER_NONE);
+    var blockCode = 'updateSay('+inputText+');';
+    return blockCode;
+}   
